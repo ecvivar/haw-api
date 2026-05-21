@@ -1,0 +1,66 @@
+name: "Build, Publish and Release"
+
+on:
+  push:
+    tags:
+      - 'v[0-9].[0-9]+.[0-9]'
+
+env:
+  GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+
+jobs:
+  build-publish-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up checkout
+        uses: actions/checkout@v3
+
+      - name: Set up latest git tag
+        run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+        env:
+          TAG: '$(git describe --tags)'
+
+      - name: Set up container name
+        run: echo "CONTAINER_NAME=${REPOSITORY,,}" >> $GITHUB_ENV
+        env:
+          REPOSITORY: '${{ github.repository }}'
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'corretto'
+          cache: 'maven'
+
+      # Build
+
+      ## Build website, docs, javadoc and the project (Without tests)
+      - name: Build project
+        run: make build-wot
+
+      ## Push to GHCR (GitHub Container Registry)
+      - name: Docker build
+        run: |
+          docker build -t ghcr.io/${{ env.CONTAINER_NAME }}:latest .
+          docker build -t ghcr.io/${{ env.CONTAINER_NAME }}:${{ env.VERSION }} .
+
+      # Publish
+
+      - name: GitHub (GHCR) login
+        run: echo $GHCR_TOKEN | docker login ghcr.io -u LucJosin --password-stdin
+
+      - name: GitHub (GHCR) push
+        run: |
+          docker push ghcr.io/${{ env.CONTAINER_NAME }}:latest
+          docker push ghcr.io/${{ env.CONTAINER_NAME }}:${{ env.VERSION }}
+
+      - name: Install and configure the Koyeb CLI
+        uses: koyeb-community/install-koyeb-cli@v2
+        with:
+          api_token: "${{ secrets.KOYEB_TOKEN }}"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+
+      # Release
+
+      - name: Deploy to Koyeb
+        run: koyeb service redeploy project/hawapi
