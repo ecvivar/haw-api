@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Character {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(uuid()) @db.Uuid
+  href      String?
+  thumbnail String?
+  sources   String[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  firstName String?   @map("first_name")
+  lastName  String?   @map("last_name")
+  nicknames String[]  @db.VarChar
+  birthDate DateTime? @map("birth_date") @db.Date
+  deathDate DateTime? @map("death_date") @db.Date
+  gender    Int?
+  actor     String?
+  images    String[]
+
+  @@map("characters")
+}
+
+model Actor {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  firstName   String        @map("first_name")
+  lastName    String        @map("last_name")
+  nicknames   String[]      @db.VarChar
+  birthDate   DateTime?     @map("birth_date") @db.Date
+  deathDate   DateTime?     @map("death_date") @db.Date
+  gender      Int?
+  nationality String?
+  seasons     String[]      @db.VarChar
+  awards      String[]      @db.VarChar
+  character   String
+  images      String[]
+  socials     ActorSocial[]
+
+  @@map("actors")
+}
+
+model ActorSocial {
+  id        Int    @id @default(autoincrement())
+  social    String
+  handle    String
+  url       String
+  actorUuid String @map("actor_uuid") @db.Uuid
+  actor     Actor  @relation(fields: [actorUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("actors_socials")
+}
+
+model Episode {
+  id          Int                 @id @default(autoincrement())
+  uuid        String              @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+  duration    Int
+  episodeNum  Int                 @map("episode_num") @db.SmallInt
+  nextEpisode String?             @map("next_episode")
+  prevEpisode String?             @map("prev_episode")
+  season      String
+  images      String[]
+  translation EpisodeTranslation?
+
+  @@map("episodes")
+}
+
+model EpisodeTranslation {
+  id          Int     @id @default(autoincrement())
+  language    String
+  title       String
+  description String
+  episodeUuid String  @unique @map("episode_uuid") @db.Uuid
+  episode     Episode @relation(fields: [episodeUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("episodes_translations")
+}
+
+model Game {
+  id          Int              @id @default(autoincrement())
+  uuid        String           @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  playtime    Int?
+  ageRating   String?          @map("age_rating")
+  stores      String[]         @db.VarChar
+  modes       String[]         @db.VarChar
+  platforms   String[]         @db.VarChar
+  publishers  String[]         @db.VarChar
+  developers  String[]         @db.VarChar
+  tags        String[]         @db.VarChar
+  releaseDate DateTime         @map("release_date") @db.Date
+  website     String
+  images      String[]
+  translation GameTranslation?
+
+  @@map("games")
+}
+
+model GameTranslation {
+  id          Int      @id @default(autoincrement())
+  language    String
+  name        String
+  description String
+  genres      String[] @db.VarChar
+  trailer     String?
+  gameUuid    String   @unique @map("game_uuid") @db.Uuid
+  game        Game     @relation(fields: [gameUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("games_translations")
+}
+
+model Location {
+  id          Int                  @id @default(autoincrement())
+  uuid        String               @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  images      String[]
+  translation LocationTranslation?
+
+  @@map("locations")
+}
+
+model LocationTranslation {
+  id           Int      @id @default(autoincrement())
+  language     String
+  name         String
+  description  String
+  locationUuid String   @unique @map("location_uuid") @db.Uuid
+  location     Location @relation(fields: [locationUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("locations_translations")
+}
+
+model Overview {
+  id          Int                  @id @default(autoincrement())
+  uuid        String               @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  languages   String[]             @db.VarChar
+  creators    String[]             @db.VarChar
+  translation OverviewTranslation?
+
+  @@map("overviews")
+}
+
+model OverviewTranslation {
+  id           Int      @id @default(autoincrement())
+  language     String
+  title        String
+  description  String
+  overviewUuid String   @unique @map("overview_uuid") @db.Uuid
+  overview     Overview @relation(fields: [overviewUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("overviews_translations")
+}
+
+model Season {
+  id            Int                @id @default(autoincrement())
+  uuid          String             @unique @default(uuid()) @db.Uuid
+  href          String?
+  thumbnail     String?
+  sources       String[]
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+  durationTotal Int                @map("duration_total")
+  seasonNum     Int                @map("season_num") @db.SmallInt
+  releaseDate   DateTime           @map("release_date") @db.Date
+  nextSeason    String?            @map("next_season")
+  prevSeason    String?            @map("prev_season")
+  episodes      String[]           @db.VarChar
+  soundtracks   String[]           @db.VarChar
+  budget        Int?
+  images        String[]
+  translation   SeasonTranslation?
+
+  @@map("seasons")
+}
+
+model SeasonTranslation {
+  id          Int      @id @default(autoincrement())
+  language    String
+  title       String
+  description String
+  genres      String[] @db.VarChar
+  trailers    String[]
+  seasonUuid  String   @unique @map("season_uuid") @db.Uuid
+  season      Season   @relation(fields: [seasonUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("seasons_translations")
+}
+
+model Soundtrack {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(uuid()) @db.Uuid
+  href        String?
+  thumbnail   String?
+  sources     String[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  name        String
+  duration    Int
+  artist      String
+  album       String?
+  releaseDate DateTime @map("release_date") @db.Date
+  urls        String[]
+
+  @@map("soundtracks")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid()) @db.Uuid
+  firstName String?  @map("first_name")
+  lastName  String?  @map("last_name")
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("BASIC")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}

@@ -1,19 +1,28 @@
-FROM amazoncorretto:8-alpine-jdk
-
-LABEL org.opencontainers.image.title="HawAPI"
-LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.url="https://hawapi.theproject.id"
-LABEL org.opencontainers.image.source="https://github.com/HawAPI/HawAPI"
-LABEL org.opencontainers.image.documentation='https://hawapi.theproject.id/docs/'
-LABEL org.opencontainers.image.description="A Free and Open Source API for Stranger Things"
-
-LABEL maintainer="Lucas Josino <contact@lucasjosino.com>"
-LABEL git="https://github/HawAPI/HawAPI"
-LABEL website="https://hawapi.theproject.id"
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY target/hawapi-*.jar hawapi.jar
+COPY package.json package-lock.json ./
+RUN npm ci
 
-EXPOSE 8000
-ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","hawapi.jar"]
+COPY tsconfig.json ./
+COPY prisma/ ./prisma/
+COPY src/ ./src/
+
+RUN npx prisma generate
+RUN npm run build
+
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+COPY package.json ./
+
+EXPOSE 8080
+
+CMD ["node", "dist/index.js"]
