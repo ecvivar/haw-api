@@ -117,3 +117,81 @@ function castValue(value: string, type: string): number | Date | string {
       return value;
   }
 }
+
+export function buildRawWhereConditions(
+  filters: Record<string, string | undefined>,
+  fieldMappings: FilterMapping[],
+  skipFields: string[] = ['page', 'size', 'language'],
+): { text: string; values: unknown[] } {
+  const clauses: string[] = [];
+  const values: unknown[] = [];
+  let idx = 1;
+
+  for (const [key, rawValue] of Object.entries(filters)) {
+    if (skipFields.includes(key) || rawValue === undefined) continue;
+
+    const mapping = fieldMappings.find(m => m.field === key);
+    if (!mapping || mapping.translationField) continue;
+
+    const { operator, cleanValue } = extractValue(rawValue);
+    const column = `a."${key}"`;
+
+    switch (operator) {
+      case FilterOperator.LIKE:
+        clauses.push(`${column} ILIKE $${idx++}`);
+        values.push(`%${cleanValue}%`);
+        break;
+      case FilterOperator.NOT_LIKE:
+        clauses.push(`${column} NOT ILIKE $${idx++}`);
+        values.push(`%${cleanValue}%`);
+        break;
+      case FilterOperator.GREATER_THAN:
+        clauses.push(`${column} > $${idx++}`);
+        values.push(castValue(cleanValue, mapping.type));
+        break;
+      case FilterOperator.LESS_THAN:
+        clauses.push(`${column} < $${idx++}`);
+        values.push(castValue(cleanValue, mapping.type));
+        break;
+      case FilterOperator.GREATER_OR_EQUALS:
+        clauses.push(`${column} >= $${idx++}`);
+        values.push(castValue(cleanValue, mapping.type));
+        break;
+      case FilterOperator.LESS_OR_EQUALS:
+        clauses.push(`${column} <= $${idx++}`);
+        values.push(castValue(cleanValue, mapping.type));
+        break;
+      case FilterOperator.NOT_EQUALS:
+        clauses.push(`${column} != $${idx++}`);
+        values.push(cleanValue);
+        break;
+      case FilterOperator.IN: {
+        const items = cleanValue.split(',');
+        const placeholders = items.map(() => `$${idx++}`).join(', ');
+        clauses.push(`${column} IN (${placeholders})`);
+        values.push(...items);
+        break;
+      }
+      case FilterOperator.NOT_IN: {
+        const items = cleanValue.split(',');
+        const placeholders = items.map(() => `$${idx++}`).join(', ');
+        clauses.push(`${column} NOT IN (${placeholders})`);
+        values.push(...items);
+        break;
+      }
+      case FilterOperator.BETWEEN: {
+        const [start, end] = cleanValue.split('::');
+        clauses.push(`${column} BETWEEN $${idx++} AND $${idx++}`);
+        values.push(castValue(start, mapping.type), castValue(end, mapping.type));
+        break;
+      }
+      case FilterOperator.EQUALS:
+      default:
+        clauses.push(`${column} = $${idx++}`);
+        values.push(castValue(cleanValue, mapping.type));
+        break;
+    }
+  }
+
+  return { text: clauses.join(' AND '), values };
+}

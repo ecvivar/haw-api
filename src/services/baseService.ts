@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
 import prisma from '../utils/prisma';
 import { ItemNotFoundException } from '../utils/errors';
 import { parsePagination, buildPaginationHeaders } from '../utils/pagination';
+import { FilterMapping, buildRawWhereConditions } from '../utils/filters';
 
 export interface FindAllParams {
   page?: string;
@@ -23,29 +23,29 @@ export interface FindAllResult<T> {
 export abstract class BaseService<T, D> {
   protected abstract modelName: string;
   protected abstract basePath: string;
-  protected abstract allowedFilters: string[];
+  protected abstract allowedFilters: FilterMapping[];
 
   async findAll(
     params: FindAllParams,
-    additionalWhere?: Prisma.Sql[],
   ): Promise<FindAllResult<D>> {
     const { skip, take, page, size } = parsePagination(params);
 
-    const whereClauses: Prisma.Sql[] = additionalWhere || [];
+    const { text: whereText, values: whereValues } = buildRawWhereConditions(
+      params as Record<string, string | undefined>,
+      this.allowedFilters,
+    );
 
-    const where = whereClauses.length > 0
-      ? Prisma.sql`WHERE ${Prisma.join(whereClauses, ' AND ')}`
-      : Prisma.empty;
+    const where = whereText ? `WHERE ${whereText}` : '';
 
     const model = this.modelName;
 
-    const countSql = `SELECT COUNT(*) FROM "${model}" a`;
-    const totalResult = await prisma.$queryRawUnsafe<[{ count: bigint }]>(countSql);
+    const countSql = `SELECT COUNT(*) FROM "${model}" a ${where}`;
+    const totalResult = await prisma.$queryRawUnsafe<[{ count: bigint }]>(countSql, ...whereValues);
     const total = Number(totalResult[0]?.count || 0);
 
-    const sortColumn = 'a."created_at"';
-    const dataSql = `SELECT a.* FROM "${model}" a ORDER BY ${sortColumn} ASC LIMIT $1 OFFSET $2`;
-    const rows = await prisma.$queryRawUnsafe<unknown[]>(dataSql, take, skip);
+    const paramOffset = whereValues.length;
+    const dataSql = `SELECT a.* FROM "${model}" a ${where} ORDER BY a."created_at" ASC LIMIT $${paramOffset + 1} OFFSET $${paramOffset + 2}`;
+    const rows = await prisma.$queryRawUnsafe<unknown[]>(dataSql, ...whereValues, take, skip);
 
     const data = rows.map((row: unknown) => this.toDTO(row as Record<string, unknown>));
 

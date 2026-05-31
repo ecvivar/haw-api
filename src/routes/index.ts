@@ -8,6 +8,7 @@ import { locationController } from '../controllers/locationController';
 import { seasonController } from '../controllers/seasonController';
 import { soundtrackController } from '../controllers/soundtrackController';
 import { overviewController } from '../controllers/overviewController';
+import { translationController } from '../controllers/translationController';
 import { authenticate, requireRole, AuthRequest } from '../middleware/auth';
 import { authRateLimiter } from '../middleware/rateLimiter';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -16,13 +17,14 @@ const router = Router();
 
 router.get('/api', asyncHandler(overviewController.getApiInfo));
 router.get('/api/ping', asyncHandler(overviewController.ping));
+router.get('/api/health', asyncHandler(overviewController.health));
 
 const v1 = Router();
 
 v1.get('/endpoints', authenticate, asyncHandler(overviewController.getEndpoints));
 
 // Auth
-v1.post('/auth/register', authRateLimiter, authenticate, asyncHandler(authController.register));
+v1.post('/auth/register', authRateLimiter, asyncHandler(authController.register));
 v1.post('/auth/authenticate', authRateLimiter, asyncHandler(authController.authenticate));
 v1.post('/auth/delete', authRateLimiter, authenticate, asyncHandler(authController.delete));
 
@@ -103,6 +105,9 @@ v1.patch('/seasons/:uuid', authenticate, requireRole('ADMIN', 'MAINTAINER'), asy
 v1.patch('/seasons/:uuid/translations/:language', authenticate, requireRole('ADMIN', 'MAINTAINER'), asyncHandler(seasonController.patchTranslation));
 v1.delete('/seasons/:uuid', authenticate, requireRole('ADMIN', 'MAINTAINER'), asyncHandler(seasonController.delete));
 v1.delete('/seasons/:uuid/translations/:language', authenticate, requireRole('ADMIN', 'MAINTAINER'), asyncHandler(seasonController.deleteTranslation));
+
+// Translations
+v1.get('/translations', authenticate, asyncHandler(translationController.findAll));
 
 // Soundtracks
 v1.get('/soundtracks', authenticate, asyncHandler(soundtrackController.findAll));

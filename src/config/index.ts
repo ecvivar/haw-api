@@ -10,21 +10,23 @@ export const config = {
   },
 
   jwt: {
-    privateKey: process.env.JWT_PRIVATE_KEY || '',
-    publicKey: process.env.JWT_PUBLIC_KEY || '',
-    issuer: process.env.JWT_ISSUER || 'HawAPI',
-    audience: process.env.JWT_AUDIENCE || 'http://localhost:8080/api/v1',
+  privateKey: (process.env.JWT_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+  publicKey: (process.env.JWT_PUBLIC_KEY || '').replace(/\\n/g, '\n'),
+  issuer: process.env.JWT_ISSUER || 'HawAPI',
+  audience: process.env.JWT_AUDIENCE || 'http://localhost:8080/api/v1',
   },
 
   api: {
     title: process.env.API_TITLE || 'HawAPI',
     description: process.env.API_DESCRIPTION || 'A Free and Open Source API for Stranger Things.',
     version: process.env.API_VERSION || '1.2.0',
-    url: process.env.API_URL || 'http://localhost:8080',
+    url: process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : (process.env.API_URL || 'http://localhost:8080'),
     path: process.env.API_PATH || '/api',
     versionPath: process.env.API_VERSION_PATH || 'v1',
     basePath: `${process.env.API_PATH || '/api'}/${process.env.API_VERSION_PATH || 'v1'}`,
-    docs: `${process.env.API_URL || 'http://localhost:8080'}/docs`,
+    docs: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : (process.env.API_URL || 'http://localhost:8080')}/docs`,
     github: 'https://github.com/HawAPI/HawAPI',
     githubHome: 'https://github.com/HawAPI',
     license: 'MIT License',
@@ -49,6 +51,10 @@ export const config = {
   pagination: {
     maxPageSize: parseInt(process.env.PAGE_MAX_SIZE || '20', 10),
     defaultPageSize: parseInt(process.env.PAGE_DEFAULT_SIZE || '10', 10),
+  },
+
+  cors: {
+    origin: process.env.CORS_ORIGIN || '*',
   },
 
   registration: {

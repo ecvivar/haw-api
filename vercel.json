@@ -4,7 +4,8 @@
   "functions": {
     "api/index.ts": {
       "memory": 512,
-      "maxDuration": 10
+      "maxDuration": 10,
+      "includeFiles": "prisma/**"
     }
   },
   "rewrites": [

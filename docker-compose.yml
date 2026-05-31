@@ -2,27 +2,88 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:15.1-alpine
+    container_name: hawapi-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: hawapi
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--data-checksums"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "max_connections=50"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "statement_timeout=30000"
+      - "-c"
+      - "idle_in_transaction_session_timeout=60000"
+      - "-c"
+      - "client_connection_check_interval=30000"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hawapi -q"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    networks:
+      - hawapi-net
 
   api:
     build: .
+    container_name: hawapi-api
+    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       DATABASE_URL: postgresql://postgres:postgres@db:5432/hawapi
       JWT_PRIVATE_KEY: ""
       JWT_PUBLIC_KEY: ""
+      CORS_ORIGIN: "*"
+      PORT: "8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/api/health', r => { let d='';r.on('data',c=>d+=c);r.on('end',()=>process.exit(JSON.parse(d).status==='healthy'?0:1))}).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    networks:
+      - hawapi-net
 
 volumes:
   postgres_data:
+    name: hawapi_postgres_data
+
+networks:
+  hawapi-net:
+    name: hawapi_network
+    driver: bridge

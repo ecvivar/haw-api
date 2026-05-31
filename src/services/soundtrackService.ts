@@ -1,3 +1,4 @@
+import { FilterMapping } from '../utils/filters';
 import prisma from '../utils/prisma';
 import { BaseService, FindAllParams, FindAllResult } from './baseService';
 import { SoundtrackDTO } from '../types';
@@ -6,7 +7,13 @@ import { config } from '../config';
 export class SoundtrackService extends BaseService<unknown, SoundtrackDTO> {
   protected modelName = 'soundtracks';
   protected basePath = `${config.api.basePath}/soundtracks`;
-  protected allowedFilters: string[] = [];
+  protected allowedFilters: FilterMapping[] = [
+    { field: 'name', type: 'string' },
+    { field: 'duration', type: 'number' },
+    { field: 'artist', type: 'string' },
+    { field: 'album', type: 'string' },
+    { field: 'release_date', type: 'date' },
+  ];
 
   async findAll(params: FindAllParams): Promise<FindAllResult<SoundtrackDTO>> {
     return super.findAll(params);

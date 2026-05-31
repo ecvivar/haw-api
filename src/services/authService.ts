@@ -11,7 +11,7 @@ import {
 import { Role, UserDTO, UserRegistrationDTO, UserAuthDTO } from '../types';
 
 function generateToken(user: { uuid: string; username: string; email: string; role: string }): string {
-  const privateKey = config.jwt.privateKey || 'your-private-key';
+  const privateKey = config.jwt.privateKey;
   return jwt.sign(
     {
       uuid: user.uuid,

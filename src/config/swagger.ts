@@ -1,6 +1,10 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import { config } from './index';
 
+const vercelUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.API_URL || 'http://localhost:8080';
+
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
@@ -15,8 +19,8 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: config.api.url,
-        description: 'Development server',
+        url: vercelUrl,
+        description: process.env.VERCEL_URL ? 'Vercel production' : 'Development server',
       },
     ],
     components: {
@@ -29,7 +33,7 @@ const options: swaggerJsdoc.Options = {
       },
     },
   },
-  apis: [process.env.NODE_ENV === 'production' ? './dist/routes/*.js' : './src/routes/*.ts'],
+  apis: ['./dist/routes/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

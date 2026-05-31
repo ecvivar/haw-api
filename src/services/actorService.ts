@@ -1,3 +1,4 @@
+import { FilterMapping } from '../utils/filters';
 import prisma from '../utils/prisma';
 import { BaseService, FindAllParams, FindAllResult } from './baseService';
 import { ActorDTO, ActorSocialDTO } from '../types';
@@ -7,7 +8,13 @@ import { ItemNotFoundException } from '../utils/errors';
 export class ActorService extends BaseService<unknown, ActorDTO> {
   protected modelName = 'actors';
   protected basePath = `${config.api.basePath}/actors`;
-  protected allowedFilters = ['first_name', 'last_name', 'gender', 'nationality', 'character'];
+  protected allowedFilters: FilterMapping[] = [
+    { field: 'first_name', type: 'string' },
+    { field: 'last_name', type: 'string' },
+    { field: 'gender', type: 'number' },
+    { field: 'nationality', type: 'string' },
+    { field: 'character', type: 'string' },
+  ];
 
   async findAll(params: FindAllParams): Promise<FindAllResult<ActorDTO>> {
     return super.findAll(params);

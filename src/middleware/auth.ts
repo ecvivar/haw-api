@@ -30,7 +30,7 @@ export function authenticate(req: AuthRequest, _res: Response, next: NextFunctio
   }
 
   try {
-    const publicKey = config.jwt.publicKey || 'your-public-key';
+    const publicKey = config.jwt.publicKey;
     const decoded = jwt.verify(token, publicKey, {
       issuer: config.jwt.issuer,
       audience: config.jwt.audience,

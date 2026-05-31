@@ -1,0 +1,12 @@
+{
+  "data": {
+    "languages": ["en-US", "pt-BR", "es-ES"],
+    "creators": ["The Duffer Brothers"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Stranger_Things"],
+    "translations": [
+      { "language": "en-US", "title": "Stranger Things", "description": "A Free and Open Source API for Stranger Things." },
+      { "language": "pt-BR", "title": "Stranger Things", "description": "Uma API gratuita e de código aberto para Stranger Things." },
+      { "language": "es-ES", "title": "Stranger Things", "description": "Una API gratuita y de código abierto para Stranger Things." }
+    ]
+  }
+}

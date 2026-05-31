@@ -30,6 +30,16 @@ export class OverviewController {
     res.json('Pong');
   }
 
+  async health(req: AuthRequest, res: Response): Promise<void> {
+    const prisma = (await import('../utils/prisma')).default;
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.json({ status: 'healthy', database: 'connected', timestamp: new Date().toISOString() });
+    } catch {
+      res.status(503).json({ status: 'unhealthy', database: 'disconnected', timestamp: new Date().toISOString() });
+    }
+  }
+
   async getEndpoints(req: AuthRequest, res: Response): Promise<void> {
     const { config } = await import('../config');
     res.json({
@@ -41,6 +51,7 @@ export class OverviewController {
       locations: `${config.api.basePath}/locations`,
       seasons: `${config.api.basePath}/seasons`,
       soundtracks: `${config.api.basePath}/soundtracks`,
+      translations: `${config.api.basePath}/translations`,
       overview: `${config.api.basePath}/overview`,
     });
   }

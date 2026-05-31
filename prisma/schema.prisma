@@ -76,7 +76,7 @@ model Episode {
   prevEpisode String?             @map("prev_episode")
   season      String
   images      String[]
-  translation EpisodeTranslation?
+  translations EpisodeTranslation[]
 
   @@map("episodes")
 }
@@ -86,9 +86,10 @@ model EpisodeTranslation {
   language    String
   title       String
   description String
-  episodeUuid String  @unique @map("episode_uuid") @db.Uuid
+  episodeUuid String  @map("episode_uuid") @db.Uuid
   episode     Episode @relation(fields: [episodeUuid], references: [uuid], onDelete: Cascade)
 
+  @@unique([episodeUuid, language])
   @@map("episodes_translations")
 }
 
@@ -111,7 +112,7 @@ model Game {
   releaseDate DateTime         @map("release_date") @db.Date
   website     String
   images      String[]
-  translation GameTranslation?
+  translations GameTranslation[]
 
   @@map("games")
 }
@@ -123,9 +124,10 @@ model GameTranslation {
   description String
   genres      String[] @db.VarChar
   trailer     String?
-  gameUuid    String   @unique @map("game_uuid") @db.Uuid
+  gameUuid    String   @map("game_uuid") @db.Uuid
   game        Game     @relation(fields: [gameUuid], references: [uuid], onDelete: Cascade)
 
+  @@unique([gameUuid, language])
   @@map("games_translations")
 }
 
@@ -138,7 +140,7 @@ model Location {
   createdAt   DateTime             @default(now()) @map("created_at")
   updatedAt   DateTime             @updatedAt @map("updated_at")
   images      String[]
-  translation LocationTranslation?
+  translations LocationTranslation[]
 
   @@map("locations")
 }
@@ -148,9 +150,10 @@ model LocationTranslation {
   language     String
   name         String
   description  String
-  locationUuid String   @unique @map("location_uuid") @db.Uuid
+  locationUuid String   @map("location_uuid") @db.Uuid
   location     Location @relation(fields: [locationUuid], references: [uuid], onDelete: Cascade)
 
+  @@unique([locationUuid, language])
   @@map("locations_translations")
 }
 
@@ -164,7 +167,7 @@ model Overview {
   updatedAt   DateTime             @updatedAt @map("updated_at")
   languages   String[]             @db.VarChar
   creators    String[]             @db.VarChar
-  translation OverviewTranslation?
+  translations OverviewTranslation[]
 
   @@map("overviews")
 }
@@ -174,9 +177,10 @@ model OverviewTranslation {
   language     String
   title        String
   description  String
-  overviewUuid String   @unique @map("overview_uuid") @db.Uuid
+  overviewUuid String   @map("overview_uuid") @db.Uuid
   overview     Overview @relation(fields: [overviewUuid], references: [uuid], onDelete: Cascade)
 
+  @@unique([overviewUuid, language])
   @@map("overviews_translations")
 }
 
@@ -197,7 +201,7 @@ model Season {
   soundtracks   String[]           @db.VarChar
   budget        Int?
   images        String[]
-  translation   SeasonTranslation?
+  translations   SeasonTranslation[]
 
   @@map("seasons")
 }
@@ -209,9 +213,10 @@ model SeasonTranslation {
   description String
   genres      String[] @db.VarChar
   trailers    String[]
-  seasonUuid  String   @unique @map("season_uuid") @db.Uuid
+  seasonUuid  String   @map("season_uuid") @db.Uuid
   season      Season   @relation(fields: [seasonUuid], references: [uuid], onDelete: Cascade)
 
+  @@unique([seasonUuid, language])
   @@map("seasons_translations")
 }
 

@@ -1,0 +1,79 @@
+[
+  {
+    "uuid": "a0000001-0000-4000-8000-000000000001",
+    "durationTotal": 480,
+    "seasonNum": 1,
+    "releaseDate": "2016-07-15",
+    "episodes": ["1", "2", "3", "4", "5", "6", "7", "8"],
+    "budget": 36000000,
+    "images": ["https://placehold.co/400x600/1a1a2e/e94560?text=Season+1"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Season_1"],
+    "translations": [
+      { "language": "en-US", "title": "Season 1", "description": "The disappearance of a young boy leads a group of friends and a troubled police chief into a mystery involving secret experiments, terrifying supernatural forces, and one very strange little girl.", "genres": ["Sci-Fi", "Horror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=bVq6sWnLM4M"] },
+      { "language": "pt-BR", "title": "Temporada 1", "description": "O desaparecimento de um garoto leva um grupo de amigos e um xerife problemático a um mistério envolvendo experimentos secretos, forças sobrenaturais aterrorizantes e uma garotinha muito estranha.", "genres": ["Ficção Científica", "Terror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=bVq6sWnLM4M"] },
+      { "language": "es-ES", "title": "Temporada 1", "description": "La desaparición de un niño lleva a un grupo de amigos y a un problemático jefe de policía a un misterio que involucra experimentos secretos, fuerzas sobrenaturales aterradoras y una niña muy extraña.", "genres": ["Ciencia Ficción", "Terror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=bVq6sWnLM4M"] }
+    ]
+  },
+  {
+    "uuid": "a0000001-0000-4000-8000-000000000002",
+    "durationTotal": 558,
+    "seasonNum": 2,
+    "releaseDate": "2017-10-27",
+    "episodes": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "budget": 46000000,
+    "images": ["https://placehold.co/400x600/1a1a2e/e94560?text=Season+2"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Season_2"],
+    "translations": [
+      { "language": "en-US", "title": "Season 2", "description": "It's been nearly a year since Will's return, but life in Hawkins is far from back to normal. New threats emerge, old friendships are tested, and the mystery of the Upside Down deepens.", "genres": ["Sci-Fi", "Horror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=R1ZXOOLMJ8s"] },
+      { "language": "pt-BR", "title": "Temporada 2", "description": "Quase um ano se passou desde o retorno de Will, mas a vida em Hawkins está longe do normal. Novas ameaças surgem, velhas amizades são testadas e o mistério do Mundo Invertido se aprofunda.", "genres": ["Ficção Científica", "Terror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=R1ZXOOLMJ8s"] },
+      { "language": "es-ES", "title": "Temporada 2", "description": "Ha pasado casi un año desde el regreso de Will, pero la vida en Hawkins está lejos de volver a la normalidad. Nuevas amenazas surgen, las viejas amistades se ponen a prueba y el misterio del Upside Down se profundiza.", "genres": ["Ciencia Ficción", "Terror", "Drama"], "trailers": ["https://www.youtube.com/watch?v=R1ZXOOLMJ8s"] }
+    ]
+  },
+  {
+    "uuid": "a0000001-0000-4000-8000-000000000003",
+    "durationTotal": 608,
+    "seasonNum": 3,
+    "releaseDate": "2019-07-04",
+    "episodes": ["1", "2", "3", "4", "5", "6", "7", "8"],
+    "budget": 62000000,
+    "images": ["https://placehold.co/400x600/1a1a2e/e94560?text=Season+3"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Season_3"],
+    "translations": [
+      { "language": "en-US", "title": "Season 3", "description": "Summer 1985: new mall, new romance, new threats. When a Soviet plot threatens Hawkins, the kids must band together once more to save their town from destruction.", "genres": ["Sci-Fi", "Horror", "Drama", "Action"], "trailers": ["https://www.youtube.com/watch?v=Ml4BKFhHXq8"] },
+      { "language": "pt-BR", "title": "Temporada 3", "description": "Verão de 1985: novo shopping, novo romance, novas ameaças. Quando um complô soviético ameaça Hawkins, as crianças devem se unir mais uma vez para salvar sua cidade da destruição.", "genres": ["Ficção Científica", "Terror", "Drama", "Ação"], "trailers": ["https://www.youtube.com/watch?v=Ml4BKFhHXq8"] },
+      { "language": "es-ES", "title": "Temporada 3", "description": "Verano de 1985: nuevo centro comercial, nuevo romance, nuevas amenazas. Cuando un complot soviético amenaza a Hawkins, los chicos deben unirse una vez más para salvar su ciudad de la destrucción.", "genres": ["Ciencia Ficción", "Terror", "Drama", "Acción"], "trailers": ["https://www.youtube.com/watch?v=Ml4BKFhHXq8"] }
+    ]
+  },
+  {
+    "uuid": "a0000001-0000-4000-8000-000000000004",
+    "durationTotal": 775,
+    "seasonNum": 4,
+    "releaseDate": "2022-05-27",
+    "episodes": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "budget": 270000000,
+    "images": ["https://placehold.co/400x600/1a1a2e/e94560?text=Season+4"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Season_4"],
+    "nextSeason": "a0000001-0000-4000-8000-000000000005",
+    "translations": [
+      { "language": "en-US", "title": "Season 4", "description": "Six months after the Battle of Starcourt, the gang is separated — and navigating the complexities of high school. A new and horrifying supernatural threat surfaces, setting a mystery that connects all the way back to the beginning.", "genres": ["Sci-Fi", "Horror", "Drama", "Action"], "trailers": ["https://www.youtube.com/watch?v=mgX1l2AKK6s"] },
+      { "language": "pt-BR", "title": "Temporada 4", "description": "Seis meses após a Batalha de Starcourt, o grupo está separado — e navegando pelas complexidades do ensino médio. Uma nova e horrível ameaça sobrenatural surge, estabelecendo um mistério que remonta ao início.", "genres": ["Ficção Científica", "Terror", "Drama", "Ação"], "trailers": ["https://www.youtube.com/watch?v=mgX1l2AKK6s"] },
+      { "language": "es-ES", "title": "Temporada 4", "description": "Seis meses después de la Batalla de Starcourt, el grupo está separado, navegando por las complejidades de la escuela secundaria. Una nueva y horrible amenaza sobrenatural surge, estableciendo un misterio que se remonta al principio.", "genres": ["Ciencia Ficción", "Terror", "Drama", "Acción"], "trailers": ["https://www.youtube.com/watch?v=mgX1l2AKK6s"] }
+    ]
+  },
+  {
+    "uuid": "a0000001-0000-4000-8000-000000000005",
+    "durationTotal": 0,
+    "seasonNum": 5,
+    "releaseDate": "2025-01-01",
+    "episodes": [],
+    "budget": null,
+    "images": ["https://placehold.co/400x600/1a1a2e/e94560?text=Season+5"],
+    "sources": ["https://strangerthings.fandom.com/wiki/Season_5"],
+    "prevSeason": "a0000001-0000-4000-8000-000000000004",
+    "translations": [
+      { "language": "en-US", "title": "Season 5", "description": "The final season of Stranger Things.", "genres": ["Sci-Fi", "Horror", "Drama"], "trailers": [] },
+      { "language": "pt-BR", "title": "Temporada 5", "description": "A temporada final de Stranger Things.", "genres": ["Ficção Científica", "Terror", "Drama"], "trailers": [] },
+      { "language": "es-ES", "title": "Temporada 5", "description": "La temporada final de Stranger Things.", "genres": ["Ciencia Ficción", "Terror", "Drama"], "trailers": [] }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "firstName": "Admin",
+    "lastName": "User",
+    "username": "admin",
+    "email": "admin@hawapi.com",
+    "password": "admin123",
+    "role": "ADMIN"
+  }
+]

@@ -9,9 +9,18 @@ import { snakeCaseFilter } from './middleware/snakeCase';
 import { globalRateLimiter } from './middleware/rateLimiter';
 import routes from './routes';
 
+if (!config.jwt.publicKey || !config.jwt.privateKey) {
+  console.error('FATAL: JWT_PUBLIC_KEY and JWT_PRIVATE_KEY environment variables are required');
+  process.exit(1);
+}
+
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(corsMiddleware);
 app.use(morgan(config.env === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '4.5mb' }));

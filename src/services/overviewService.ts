@@ -7,9 +7,10 @@ export class OverviewService {
   private basePath = `${config.api.basePath}/overview`;
 
   async find(): Promise<OverviewDTO> {
-    const overview = await prisma.overview.findFirst({ include: { translation: true } });
+    const overview = await prisma.overview.findFirst({ include: { translations: true } });
     if (!overview) throw new ItemNotFoundException();
-    const t = (overview as unknown as { translation?: { title?: string; description?: string; language?: string } }).translation;
+    const translations = (overview as unknown as { translations?: Array<{ title?: string; description?: string; language?: string }> }).translations || [];
+    const t = translations[0];
     return {
       uuid: overview.uuid, href: overview.href || undefined, thumbnail: overview.thumbnail || undefined,
       sources: overview.sources, created_at: overview.createdAt.toISOString(), updated_at: overview.updatedAt.toISOString(),
@@ -61,7 +62,7 @@ export class OverviewService {
   }
 
   async findAllTranslations(): Promise<OverviewTranslationDTO[]> {
-    const overview = await prisma.overview.findFirst({ include: { translation: true } });
+    const overview = await prisma.overview.findFirst();
     if (!overview) return [];
     const translations = await prisma.overviewTranslation.findMany({ where: { overviewUuid: overview.uuid } });
     return translations.map(t => ({ language: t.language, title: t.title, description: t.description }));

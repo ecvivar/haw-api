@@ -1,44 +1,48 @@
+import { FilterMapping, buildRawWhereConditions } from '../utils/filters';
 import prisma from '../utils/prisma';
 import { BaseService, FindAllParams, FindAllResult } from './baseService';
 import { LocationDTO, LocationTranslationDTO } from '../types';
 import { config } from '../config';
 import { ItemNotFoundException, SaveConflictException } from '../utils/errors';
+import { parsePagination, buildPaginationHeaders } from '../utils/pagination';
 
 export class LocationService extends BaseService<unknown, LocationDTO> {
   protected modelName = 'locations';
   protected basePath = `${config.api.basePath}/locations`;
-  protected allowedFilters: string[] = [];
+  protected allowedFilters: FilterMapping[] = [
+    { field: 'name', type: 'string', translationField: 'name' },
+  ];
 
   async findAll(params: FindAllParams): Promise<FindAllResult<LocationDTO>> {
     const language = params.language || config.language.default;
-    const { skip, take, page, size } = this.parsePagination(params);
-
-    const total = language === '*'
-      ? await prisma.location.count()
-      : await prisma.location.count({ where: { translation: { language } } } as never);
-
-    const totalPages = Math.ceil(total / size) || 0;
-
-    const locations = await prisma.location.findMany({
-      skip, take, orderBy: { createdAt: 'asc' },
-      ...(language !== '*' ? { where: { translation: { language } } } : {}),
-      include: { translation: true },
-    } as never);
-
-    const data = (locations as unknown[]).map((l) => {
-      const row = l as Record<string, unknown>;
-      const t = row.translation as { name?: string; description?: string; language?: string } | undefined;
+    const { skip, take, page, size } = parsePagination(params);
+    const { text: whereText, values: whereValues } = buildRawWhereConditions(
+      params as Record<string, string | undefined>,
+      this.allowedFilters,
+    );
+    const where = whereText ? `WHERE ${whereText}` : '';
+    const countSql = `SELECT COUNT(*) FROM "locations" a ${where}`;
+    const totalResult = await prisma.$queryRawUnsafe<[{ count: bigint }]>(countSql, ...whereValues);
+    const total = Number(totalResult[0]?.count || 0);
+    const paramOffset = whereValues.length;
+    const langJoin = language !== '*'
+      ? `LEFT JOIN "locations_translations" t ON t."location_uuid" = a."uuid" AND t."language" = $${paramOffset + 1}`
+      : `LEFT JOIN "locations_translations" t ON t."location_uuid" = a."uuid"`;
+    if (language !== '*') whereValues.push(language);
+    const dataSql = `SELECT a.*, t."name" AS "translation_name", t."description" AS "translation_description", t."language" AS "translation_language" FROM "locations" a ${langJoin} ${where} ORDER BY a."created_at" ASC LIMIT $${whereValues.length + 1} OFFSET $${whereValues.length + 2}`;
+    whereValues.push(take, skip);
+    const rows = await prisma.$queryRawUnsafe<unknown[]>(dataSql, ...whereValues);
+    const data = rows.map((row) => {
+      const r = row as Record<string, unknown>;
+      const base = this.toDTO(r);
       return {
-        uuid: row.uuid as string, href: row.href as string, thumbnail: row.thumbnail as string,
-        sources: (row.sources || []) as string[],
-        created_at: row.created_at ? new Date(row.created_at as Date).toISOString() : undefined,
-        updated_at: row.updated_at ? new Date(row.updated_at as Date).toISOString() : undefined,
-        images: row.images as string[],
-        ...(t ? { title: t.name, description: t.description, language: language === '*' ? t.language : language } : {}),
+        ...base,
+        title: r.translation_name as string || undefined,
+        description: r.translation_description as string || undefined,
+        language: r.translation_language as string || language,
       } as LocationDTO;
     });
-
-    return { data, pagination: { 'X-Pagination-Page-Index': page, 'X-Pagination-Page-Size': size, 'X-Pagination-Page-Total': totalPages, 'X-Pagination-Item-Total': total } };
+    return { data, pagination: buildPaginationHeaders(total, page, size) };
   }
 
   async findAllTranslationsBy(uuid: string): Promise<LocationTranslationDTO[]> {
@@ -86,13 +90,6 @@ export class LocationService extends BaseService<unknown, LocationDTO> {
       updated_at: row.updated_at ? new Date(row.updated_at as Date).toISOString() : undefined,
       images: row.images as string[],
     };
-  }
-
-  private parsePagination(params: { page?: string; size?: string }) {
-    const page = Math.max(1, parseInt(params.page || '1', 10));
-    let size = parseInt(params.size || String(config.pagination.defaultPageSize), 10);
-    size = Math.min(Math.max(1, size), config.pagination.maxPageSize);
-    return { skip: (page - 1) * size, take: size, page, size };
   }
 }
 
