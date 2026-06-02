@@ -33,11 +33,7 @@ export const config = {
     licenseUrl: 'https://github.com/HawAPI/HawAPI/blob/main/LICENSE',
   },
 
-  cors: {
-    origin: process.env.CORS_ORIGIN || "*",
-  },
-
-  language: {
+    language: {
     default: process.env.DEFAULT_LANGUAGE || 'en-US',
     supported: (process.env.SUPPORTED_LANGUAGES || 'en-US,pt-BR').split(',').map(s => s.trim()),
   },
