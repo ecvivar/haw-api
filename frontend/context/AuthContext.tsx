@@ -57,18 +57,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const login = useCallback(async (data: AuthInput) => {
-    const res: AuthResponse = await authService.authenticate(data);
+  function handleAuthResponse(res: AuthResponse) {
     localStorage.setItem('hawapi_token', res.token);
     setToken(res.token);
-    setUser(res.user);
+    const decoded = decodeToken(res.token);
+    setUser(decoded);
+  }
+
+  const login = useCallback(async (data: AuthInput) => {
+    const res: AuthResponse = await authService.authenticate(data);
+    handleAuthResponse(res);
   }, []);
 
   const register = useCallback(async (data: RegisterInput) => {
     const res: AuthResponse = await authService.register(data);
-    localStorage.setItem('hawapi_token', res.token);
-    setToken(res.token);
-    setUser(res.user);
+    handleAuthResponse(res);
   }, []);
 
   const logout = useCallback(() => {

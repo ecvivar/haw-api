@@ -147,7 +147,7 @@ export interface UserRegistrationDTO {
 }
 
 export interface UserAuthDTO {
-  username: string;
+  username?: string;
   email: string;
   password: string;
 }

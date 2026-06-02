@@ -80,7 +80,12 @@ export class AuthService {
 
   async authenticate(userAuth: UserAuthDTO): Promise<UserDTO> {
     const user = await prisma.user.findFirst({
-      where: { username: userAuth.username, email: userAuth.email },
+      where: {
+        OR: [
+          { email: userAuth.email },
+          ...(userAuth.username ? [{ username: userAuth.username }] : []),
+        ],
+      },
     });
 
     if (!user) {

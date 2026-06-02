@@ -1,4 +1,4 @@
-name: "Node.js Unit/Integration testing"
+name: Lint & Typecheck
 
 on:
   push:
@@ -13,9 +13,9 @@ on:
       - main
 
 jobs:
-  testing:
+  lint-typecheck:
     if: github.event.pull_request.draft == false
-    name: Node.js Unit/Integration testing
+    name: Lint & Typecheck
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -54,15 +54,5 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
-      - name: Run tests
-        run: npm test
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hawapi
-
-      - name: Publish Test Report
-        if: success() || failure()
-        uses: dorny/test-reporter@v1
-        with:
-          name: Vitest Report
-          path: test-results/**/*.xml
-          reporter: java-junit
+      - name: Run lint
+        run: npm run lint

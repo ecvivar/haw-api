@@ -739,7 +739,6 @@
  *     UserAuth:
  *       type: object
  *       required:
- *         - username
  *         - email
  *         - password
  *       properties:

@@ -45,15 +45,16 @@ export interface AuthInput {
 }
 
 export interface AuthResponse {
+  uuid?: string;
+  first_name?: string;
+  last_name?: string;
+  username: string;
+  email?: string;
+  role: string;
   token: string;
-  user: {
-    uuid: string;
-    firstName?: string;
-    lastName?: string;
-    username: string;
-    email: string;
-    role: string;
-  };
+  token_type: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface HealthResponse {
