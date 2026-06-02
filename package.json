@@ -33,7 +33,7 @@
     "swagger-jsdoc": "^6.2.8"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
