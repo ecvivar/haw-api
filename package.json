@@ -1,6 +1,6 @@
 {
   "name": "hawapi",
-  "version": "1.2.0",
+  "version": "1.2.1-debug",
   "description": "A Free and Open Source API for Stranger Things.",
   "main": "dist/index.js",
   "scripts": {
