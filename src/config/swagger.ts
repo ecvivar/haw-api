@@ -1,5 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import { config } from './index';
+import '../routes/swagger-docs';
 
 const publicUrl =
   process.env.API_URL ||

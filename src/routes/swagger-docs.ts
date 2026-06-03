@@ -2891,5 +2891,5 @@
  *               $ref: '#/components/schemas/Error'
  */
 
-// Dummy export to make TypeScript treat this as a module
-export {};
+// Dummy export to force TypeScript to preserve all @openapi JSDoc blocks
+export const __swagger = true;
