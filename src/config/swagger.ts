@@ -38,8 +38,8 @@ const options: swaggerJsdoc.Options = {
   },
   apis:
     process.env.VERCEL || process.env.NODE_ENV === 'production'
-      ? ['./dist/routes/*.js']
-      : ['./src/routes/*.ts'],
+      ? ['./dist/**/*.js']
+      : ['./src/**/*.ts'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
